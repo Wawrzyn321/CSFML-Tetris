@@ -3,7 +3,7 @@
 #include "define.h"
 
 //element listy
-typedef struct LinkedList{
+typedef struct LinkedList {
     int val;
     struct LinkedList *pNext;
 }LinkedList;
