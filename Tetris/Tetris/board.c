@@ -1,16 +1,5 @@
 #include "board.h"
 
-/*
-Funkcja czyszcz¹ca podany wiersz.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStuct
-    j - odciêta wiersza
-Watoœæ zwracana: brak.
-
-Podany wiersz jest oznaczany jako pusty,
-a kwadraty symbolizuj¹ce go - ustawiane
-jako przezroczyste.
-*/
 void board_clearRow(fieldStruct field[totalWidth][totalHeight], int j){
 #if DEBUG
     if (j<1 || j>totalHeight - 1)
@@ -22,15 +11,6 @@ void board_clearRow(fieldStruct field[totalWidth][totalHeight], int j){
     }
 }
 
-/*
-Funkcja czyszcz¹ca podany wiersz.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStuct
-    j - odciêta wiersza
-Watoœæ zwracana: 
-    true, jeœli wiersz jest zape³niony,
-false - jeœli jest pusty.
-*/
 bool board_isRowFull(fieldStruct field[totalWidth][totalHeight], int j){
 #if DEBUG
     if (j<1 || j>totalHeight - 1)
@@ -43,16 +23,6 @@ bool board_isRowFull(fieldStruct field[totalWidth][totalHeight], int j){
 }
 
 
-/*
-Funkcja inicjalizuj¹ca planszê
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStuct    
-Watoœæ zwracana: brak.
-
-Pamiêæ na kwadraty przedstawiaj¹ce pole jest
-rezerwowana, kwadraty s¹ odpowiednio
-przemieszczane i "formatowane".
-*/
 void board_init(fieldStruct field[totalWidth][totalHeight]){
     for (int i = 0; i < totalWidth; i++)
         for (int j = 0; j < totalHeight; j++){
@@ -81,24 +51,6 @@ void board_init(fieldStruct field[totalWidth][totalHeight]){
     }
 }
 
-/*
-Funkcja aktualizuj¹ca planszê.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStuct
-    *stepRate - wskaŸnik na liczbê ca³kowit¹,
-bêd¹c¹ czêstoœci¹ zegarowego przemieszczania
-klocka w dó³.
-    *points - wskaŸnik na liczbê ca³kowit¹,
-bêd¹c¹ liczb¹ zdobytyh punktów.   
-Watoœæ zwracana: brak.
-
-W funkcji ka¿dy wiersz jest sprawdzany. Jeœli
-jest ca³kowicie zape³niony, funkcja czyœci go
-i przesuwa wszystkie klocki nad ni o jedno pole
-w dó³, jednoczeœnie dodaj¹c punkt do puli oraz
-przyspieszaj¹c spadanie kolejnych klocków
-(o ile nie jest mniejsza lub równa 200ms).
-*/
 void board_update(fieldStruct field[totalWidth][totalHeight], int *stepRate, int *points){
     for (int j = 1; j < totalHeight - 1; j++)
         if (board_isRowFull(field, j)){
@@ -115,25 +67,12 @@ void board_update(fieldStruct field[totalWidth][totalHeight], int *stepRate, int
         }
 }
 
-/*
-Funkcja rysuj¹ca planszê w oknie gry.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStuct
-    *wind - wskaŸnik na okno gry
-Watoœæ zwracana: brak.
-*/
 void board_draw(sfRenderWindow *wind, fieldStruct field[totalWidth][totalHeight]){
     for (int i = 0; i < totalWidth; i++)
         for (int j = 0; j < totalHeight; j++)
             sfRenderWindow_drawRectangleShape(wind, field[i][j].rect, NULL);
 }
 
-/*
-Funkcja zwalniaj¹ca pamiêæ po planszy.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStuct
-Watoœæ zwracana: brak.
-*/
 void board_destroy(fieldStruct field[totalWidth][totalHeight]){
     for (int i = 0; i < totalWidth; i++)
         for (int j = 0; j < totalHeight; j++)

@@ -1,14 +1,5 @@
 #include "nextBrickFIeld.h"
 
-/*
-Funkcja inicjalizuj¹ca pole pokazuj¹ce kolejny klocek.
-Parametry:
-    nbf[4][4] - dwuwymiarowa tablica fieldStruct
-Wartoœæ zwracana: brak.
-
-Funkcja rezerwuje pamiêæ na prostok¹ty i okreœla ich
-parametry.
-*/
 void nbf_init(fieldStruct nbf[4][4]){
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++){
@@ -22,15 +13,6 @@ void nbf_init(fieldStruct nbf[4][4]){
         }
 }
 
-/*
-Funkcja pozwalaj¹ca na okreœlenie wyœwietlanego klocka.
-Parametry:
-    nbf[4][4] - dwuwymiarowa tablica fieldStruct
-    type - znak okreœlaj¹cy typ klocka
-Wartoœæ zwracana: brak.
-
-Funkcja "zapala" odpowiednie kwadraty w tablicy.
-*/
 void nbf_setBrick(fieldStruct nbf[4][4], char type){
 #if DEBUG
     if (type != 'O' && type != 'T' && type != 'S' && type != 'Z' && type != 'I' && type != 'L' && type != 'J'){
@@ -87,25 +69,12 @@ void nbf_setBrick(fieldStruct nbf[4][4], char type){
     }
 }
 
-/*
-Funkcja rysuj¹ca pole wyœwietlaj¹ca nastêpny klocek.
-Parametry:
-    *wind - wskaŸnik na okno gry
-    nbf[4][4] - dwuwymiarowa tablica fieldStruct
-Wartoœæ zwracana: brak.
-*/
 void nbf_draw(sfRenderWindow *wind, fieldStruct nbf[4][4]){
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
             sfRenderWindow_drawRectangleShape(wind, nbf[i][j].rect, NULL);
 }
 
-/*
-Funkcja dealokuj¹ca pamiêæ przeznaczon¹ na pole.
-Parametry:
-    nbf[4][4] - dwuwymiarowa tablica fieldStruct
-Wartoœæ zwracana: brak.
-*/
 void nbf_destroy(fieldStruct nbf[4][4]){
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)

@@ -3,45 +3,45 @@
 #include "define.h"
 #include "LinkedList.h"
 
-//Funkcja zwracaj¹ca dlugosc liczby
+//get length of the  number
 int numLen(int num);
 
-
-//Inicjalizacja prostok¹tów
+//init rectangles
 void GUI_initRects(sfRectangleShape *GUIRects[2]);
 
-//Rysowanie prostok¹tów w oknie
+//drawing rectangles in window
 void GUI_drawRects(sfRenderWindow *window, sfRectangleShape *GUIRects[2]);
 
-//Dealokacja pamiêci po prostok¹tach
+//releasing memory occupied by rectangles
 void GUI_destroyRects(sfRectangleShape *GUIRects[2]);
 
 
-//Inicjalizacja napisów gry
+//init game texts
 void GUI_initTexts(sfText *GUITexts[5], sfFont *GUIFont);
 
-//Rysowanie napisów gry w oknie
+//draw game texts on screen
 void GUI_drawTexts(sfRenderWindow *window, sfText *GUITexts[5]);
 
-//Aktualizacja napisu wyœwietlaj¹cego wynik
+//updating score text
 void GUI_updateScore(sfText *GUIText, int points);
 
-//Dealokaja pamiêci po napisach
+//releasing memory occupied by texts
 void GUI_destroyTexts(sfText *GUITexts[5]);
 
-//Inicjalizacja komponentów wyników
+
+//init highscores rectangle and texts 
 void GUI_initHS(sfText *GUI_HS_Texts[6], sfRectangleShape **GUI_HS_rec, sfFont *GUIFont);
 
-//Rysowanie komponentów wyników w oknie
+//drawing highscores window on screen
 void GUI_drawHS(sfRenderWindow *window, sfText *GUI_HS_Texts[6], sfRectangleShape *GUI_HS_rec);
 
-//Przepisanie listy wynikow do GUI
+//coping scores from list to GUI texts
 void GUI_fillHS(sfText *GUI_HS_Texts[6], struct LinkedList *l, int pos);
 
-//Wyczyszczenie listy wynikow
+//clearing the highscores
 void GUI_clearHS(sfText *GUI_HS_Texts[6]);
 
-//Dealokacja pamiêci po komponentach wyników
+//releasing memory occupied by highscores GUI
 void GUI_destroyHS(sfText *GUI_HS_Texts[6], sfRectangleShape *GUI_HS_rec);
 
 #endif

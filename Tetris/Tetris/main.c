@@ -3,42 +3,31 @@
 #include "IO.h"
 #include "gui.h"
 
-
 /*
-jak z diagramem klas
-"Wykorzystanie zmiennych lokalnych statycznych "
-ewentualna poprawka
-"kilka plików po³¹czonych w projekcie (nie przez #include!), "
-jak szczegó³owy ma byæ opis plików
+return codes:
+    0 - no problems
+    1 - font could not be loaded
+    2 - invalid board size
+    3 - scores file could not be loaded
 */
 
-/*
-Funkcja zwracajaca losowy typ klocka.
-Parametry:
-    characters - ³añcuch znaków, z³o¿ony z liter
-odpowiadaj¹cych typom klocków.
-Wartosc zwracana - znak z losowej pozycji ciagu
-podanego w argumencie.
-*/
+
+//name is kinda self-explanatory
 char getRandomBrickType(const char* characters){
     unsigned int k = rand() % strlen(characters);
     return characters[k];
 }
 
-/*
-Funkcja ukrywajaca konsolê.
-Parametry, wartoœæ zwracana - brak.
-*/
+//hiding the console in Release mode
 void hideConsole(){
     HWND wind = GetConsoleWindow();
     ShowWindow(wind, SW_HIDE);
 }
 
+
+
 int main(){
-    //stworzenie czcionki i wczytanie jej z pliku
-    //jeœli nie udalo sie otworzyc wybranej czcionki
-    //program zasygnalizuje to komunikatem i zakonczy
-    //prace, zwracajac wartosc 1
+    //load the font
     sfFont *GUIFont;
     GUIFont = sfFont_createFromFile(fontName);
     if (!GUIFont){
@@ -47,19 +36,14 @@ int main(){
         return 1;
     }
 
-    //jesli wymiary planszy sa z niewlasciwego zakresu
-    //gra moze nie dzialac wlasciwie. W tym wypadku
-    //program wyswietla komunikat, zwraca wartosc 2
-    //i konczy prace
+    //check the board size
     if (fWidth < 10 || fHeight<12){
-        printf("invalid field size! (%dx%d)\n", fWidth, fHeight);
+        printf("invalid board size! (%dx%d)\n", fWidth, fHeight);
         system("pause");
         return 2;
     }
 
-    //utworzenie listy wynikow, zaladowanie jej z pliku
-    //jestli nie uda sie otworzyc plik to program wyswietla stosowny
-    //komunikat i konczy prace zwracajac wartosc 3
+    //load scores from file
     LinkedList *scoresList = NULL;
     if (!IO_loadScores(&scoresList)){
         printf("could not load scores list! (file: %s)\n", fileName);
@@ -67,82 +51,74 @@ int main(){
         return 3;
     }
 
-    //jestli jestesmy w trybie Release, okno konsoli
-    //jest niepotrzebne
+    //Release mode - hide console
 #if DEBUG==0
     hideConsole();
 #endif
 
 
     srand((size_t)time(NULL));
-    
-    //czas, co jaki aktywny klocek bedzie poruszal sie w dol
-    //pozostaje w zakresie <200, 1000> ms
-    //(lub <200 000, 1000 000> qs
     int stepRate = startingStepRate; 
 
-    //okno gry
+    //game window
     sfRenderWindow *window = sfRenderWindow_create((sfVideoMode){ windowWidth, windowHeight, 32 }, "Tetris (H - show highscores, P- pause, R - reset)", sfClose, NULL);
 
-    bool playin = true;                //czy gra trwa nadal?
-    bool pause = false;                //czy pauza jest aktywna?
-    bool showingHighscores = false;    //czy wyswietlanie wynikow jest wlaczone?
+    bool playin = true;
+    bool pause = false;
+    bool showingHighscores = false;
 
-    //zmienne uzywane w petli stalokrokowej
+    //fixed step-loop variables
     int acc = 0;
     int st = 0;
 
-    int points = 0; //licznik punktow
+    int points = 0; //points counter
 
 
-    //zmienne umozliwiajace plynne przesuwanie klockami
-    //oraz obracanie ich
+    //locks for brick's transform
     bool upKeyReleased = true;
     bool downKeyReleased = true;
     bool rightKeyReleased = true;
     bool leftKeyReleased = true;
 
-    //symbol kolejnego klocka
+    //next brick symbol
     char nextBrickType = '\0';
 
-    //komponenty interfejstu (plik GUI.h)
+    //GUI components (GUI.h)
     sfRectangleShape* GUIRects[2];
     GUI_initRects(GUIRects);
 
-    //(plik GUI.h)
     sfText *GUITexts[5];
     GUI_initTexts(GUITexts, GUIFont);
     sfText *GUI_HS_texts[6];
     sfRectangleShape *GUI_HS_rec = NULL;
     GUI_initHS(GUI_HS_texts, &GUI_HS_rec, GUIFont);
-    int HS_pos = 0;//pozycja w wyœwietlaniu wyników
+    int HS_pos = 0;
     //0 - <0,4>, 1 - <1,5>, n - <n,n+4>...
     GUI_fillHS(GUI_HS_texts, scoresList, 0);
 
-    //stworzenie i inicjalizacja siatki gry (plik board.h)
+    //(board.h)
     fieldStruct field[totalWidth][totalHeight];
     board_init(field);
 
-    //stworzenie nowego klocka, dodanie go jako aktywnego na plansze (pliki brick.h oraz board.h)
+    //(brick.h and board.h)
     brickStruct *currentBrick = NULL;
     currentBrick = malloc(sizeof(brickStruct));
     currentBrick->type = getRandomBrickType(brickTypes);
     board_addBrick(currentBrick);
 
-    //inicjalizacja pola pokazujacego nastepny typ klocka (plik nextBrickField.h)
+    //(nextBrickField.h)
     fieldStruct nextBrickFieldStruct[4][4];
     nextBrickType = getRandomBrickType(brickTypes);
     nbf_init(nextBrickFieldStruct);
     nbf_setBrick(nextBrickFieldStruct, nextBrickType);
 
-    //zegar gry
+    //game timer
     sfClock *timer = sfClock_create();
     sfClock_restart(timer);
-    
 
-    //petla glowna
+    //main loop
     while (sfRenderWindow_isOpen(window)){
-        //przerysowywanie ekranu
+        //redraw the screen
         sfRenderWindow_clear(window, backgroundColor);
         GUI_drawRects(window, GUIRects);
         board_draw(window, field);
@@ -152,30 +128,30 @@ int main(){
             GUI_drawHS(window, GUI_HS_texts, GUI_HS_rec);
         sfRenderWindow_display(window);
 
-        //obsluga petli stalokrokowej
+        //fixed loop
         acc += (long)sfClock_getElapsedTime(timer).microseconds;
         sfClock_restart(timer);
         st += acc;
         if (st >= tetris_refreshRate) {
 
-            //ekran pauzy jest wyposazony w migajacy tekst "Paused"
+            //cool smoothly blinking "Pause" text
             if (pause){
-                double factor = ((sin(st / 5000.0 / 180.0*3.1415926535)) + 1) / 2.0; //wartosci z przedzialu <0,1>
-                sfText_setColor(GUITexts[1], (sfColor){ 255, 255, 255, (sfUint8)(63 + 192 * factor) }); //<63,255>
+                double factor = ((sin(st / 5000.0 / 180.0*3.1415926535)) + 1) / 2.0; // <0,1>
+                sfText_setColor(GUITexts[1], (sfColor){ 255, 255, 255, (sfUint8)(63 + 192 * factor) }); // <63,255>
             }
             if (st >= stepRate && !pause){
                 if (playin){
-                    //probujemy przemiescic klocek o jedno pole w dol
+                    //try to move brick down
                     if (!brick_moveDown(field, currentBrick)){
-                        for (int i = 0; i < 4 && playin; i++)   //sprawdzenie, czy klocek nie wychodzi poza planszê
+                        for (int i = 0; i < 4 && playin; i++)   //check if brick is on the board
                             if (currentBrick->poses[i].y == 2){
                                 playin = false;
                                 sfText_setColor(GUITexts[4], sfWhite);
                                 IO_saveScore(points, &scoresList);
                                 GUI_fillHS(GUI_HS_texts, scoresList, 0);
                             }
-                        //aktualizacja pola (board.h) i napisow (GUI.h)
-                        //dodanie nowego klocka (brick.h)
+                        //updating board and GUI (board.h) i napisow (GUI.h)
+                        //adding new brick
                         board_update(field, &stepRate, &points);
                         brick_place(field, currentBrick);
                         currentBrick = malloc(sizeof(brickStruct));
@@ -192,10 +168,10 @@ int main(){
             acc = 0;
         }
         
-        //obsluga zdarzen
+        //event handling
         sfEvent event;
         while (sfRenderWindow_pollEvent(window, &event)){
-            //okno zostalo zamkniete - zwalniamy zarezerwowana pamiec
+            //window is closed - release memory
             if (event.type == sfEvtClosed){
                 GUI_destroyRects(GUIRects);
                 GUI_destroyTexts(GUITexts);
@@ -208,7 +184,7 @@ int main(){
                 LinkedList_destroy(&scoresList);
                 sfRenderWindow_close(window);
             }
-            //jesli uzytkownik przelaczy widok na inne okno, automatycznie wlacza sie pauza
+            //if window focus is lost, pause the game
             if (event.type == sfEvtLostFocus && !showingHighscores && playin)
                 pause = true;
 #if DEBUG
@@ -240,10 +216,10 @@ int main(){
                     }
             }
 #endif
-            //przyspieszenie spuszczania klocka w dol i aktualizacja planszy (strzalka w dol)
+            //make brick fall down faster by pressing down arrow
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyDown && !pause && playin){
                 if (!brick_moveDown(field, currentBrick)){
-                    for (int i = 0; i < 4 && playin; i++)   //sprawdzenie, czy klocek nie wychodzi poza planszê
+                    for (int i = 0; i < 4 && playin; i++)
                         if (currentBrick->poses[i].y == 2){
                             playin = false;
                             sfText_setColor(GUITexts[4], sfWhite);
@@ -265,10 +241,10 @@ int main(){
             if (event.type == sfEvtKeyReleased && event.key.code == sfKeyDown && downKeyReleased)
                 downKeyReleased = true;
 
-            //szybkie spuszczenie klocka na pierwsza mozliwo pozycje pod nim    (enter)
+            //immedately drop the brick
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyReturn && !pause && playin){
                 while (brick_moveDown(field, currentBrick));
-                for (int i = 0; i < 4 && playin; i++)   //sprawdzenie, czy klocek nie wychodzi poza planszê
+                for (int i = 0; i < 4 && playin; i++)
                     if (currentBrick->poses[i].y == 2){
                         playin = false;
                         sfText_setColor(GUITexts[4], sfWhite);
@@ -286,7 +262,7 @@ int main(){
                 GUI_updateScore(GUITexts[3], points);
             }
 
-            //obsluga przesuwania aktywnego klocka w prawo i lewo na zyczenie gracza (strzalki w prawo i w lewo)
+            //moving brick on X axis
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyRight && playin && !pause){
                 brick_moveHorizontaly(field, currentBrick, 1);
                 rightKeyReleased = false;
@@ -302,14 +278,14 @@ int main(){
                 leftKeyReleased = true;
 
 
-            //obrot klocka (strzalka w gore)
+            //rotating the brick
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyUp && currentBrick->type != 'O' && playin && !pause){
                 if (!brick_rotate(field, currentBrick))
                     if (!brick_rotate2(field, currentBrick, -1))
                         brick_rotate2(field, currentBrick, 1);
             }
 
-            //wlaczenie/wylaczenie pauzy   ('P' lub spacja)
+            //enabling/disabling pause
             if (event.type == sfEvtKeyPressed && (event.key.code == sfKeyP || (event.key.code == sfKeySpace && !showingHighscores)) && playin){
                 if (pause){
                     sfText_setColor(GUITexts[1], sfTransparent);
@@ -324,7 +300,7 @@ int main(){
             }
 
 
-            //reset gry ('R' lub dodatkowo spacja w razie przegranej)
+            //reset game
             if (event.type == sfEvtKeyPressed && (event.key.code == sfKeyR || (!playin && event.key.code == sfKeySpace))){
                 board_destroy(field);
                 board_init(field);
@@ -352,7 +328,7 @@ int main(){
                 sfRenderWindow_setTitle(window, "Tetris (H - show highscores, P- pause, R - reset)");
             }
 
-            //wyjscie z trybu wyswietlania wynikow (escape)
+            //hide highscores
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyEscape && showingHighscores){
                 sfText_setColor(GUITexts[1], sfTransparent);
                 pause = false;
@@ -360,7 +336,7 @@ int main(){
                 sfRenderWindow_setTitle(window, "Tetris (H - show highscores, P- pause, R - reset)");
             }
 
-            //wyswietlenie wynikow (H)
+            //show highscores
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyH){
                 HS_pos = 0;
                 if (!showingHighscores){
@@ -375,20 +351,20 @@ int main(){
                 showingHighscores = !showingHighscores;
             }
 
-            //obsluga wyswietlanej listy wyników
-            if (event.type == sfEvtKeyPressed && event.key.code == sfKeyDown && showingHighscores){ //przesuwanie w dó³ (strza³ka w dó³)
+            //handle the HS list
+            if (event.type == sfEvtKeyPressed && event.key.code == sfKeyDown && showingHighscores){
                 if (HS_pos + 5 < LinkedList_getSize(scoresList)){
                     HS_pos++;
                     GUI_fillHS(GUI_HS_texts, scoresList, HS_pos);
                 }
             }
-            else if (event.type == sfEvtKeyPressed && event.key.code == sfKeyUp && showingHighscores){ //przesuwanie w górê (strza³ka w górê)
+            else if (event.type == sfEvtKeyPressed && event.key.code == sfKeyUp && showingHighscores){
                 if (HS_pos > 0){
                     HS_pos--;
                     GUI_fillHS(GUI_HS_texts, scoresList, HS_pos);
                 }
             }
-            else if (event.type == sfEvtKeyPressed && event.key.code == sfKeyC && showingHighscores){ //czyszczenie (C)
+            else if (event.type == sfEvtKeyPressed && event.key.code == sfKeyC && showingHighscores){
                 HS_pos = 0;
                 LinkedList_destroy(&scoresList);
                 GUI_clearHS(GUI_HS_texts);
@@ -399,6 +375,6 @@ int main(){
 
         }
     }
-    //wszystko poszlo zgodnie z planem - zwracamy 0
+    //all's good - return 0
     return 0;
 }

@@ -1,14 +1,5 @@
 #include "brick.h"
 
-/*
-Funkcja dodaj¹ca klocek na górê planszy.
-Parametry:
-   *brick - wskaŸnik na brickStruct
-Wartoœæ zwracana: brak.
-
-Funkcja rezerwuje pamiêæ na strukturê oraz
-okreœla jego parametry.
-*/
 void board_addBrick(brickStruct *brick){
 #if DEBUG
     if (brick->type != 'O' && brick->type != 'T' && brick->type != 'S' && brick->type != 'Z' && brick->type != 'I' && brick->type != 'L' && brick->type != 'J'){
@@ -85,12 +76,6 @@ void board_addBrick(brickStruct *brick){
 
 }
 
-/*
-Funkcja zwalniaj¹ca pamiêæ zajmowan¹ przez klocek.
-Parametry:
-    *brick - wskaŸnik na brickStruct
-Wartoœæ zwracana: brak.
-*/
 void brick_destroy(brickStruct *brick){
     if (brick == NULL)
         return;
@@ -99,21 +84,7 @@ void brick_destroy(brickStruct *brick){
     free(brick);
 }
 
-/*
-Funkcja przemieszczaj¹ca klocek na osi horyzontalnej.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStruct
-    *brick - wskaŸnik na brickStruct
-    delta - przesuniêcie
-Wartoœæ zwracana:
-    true, jeœli uda siê przemieœciæ klocek,
-w przeciwnym wypadku false
-
-Funkcja przemieszca klocek, a nastêpnie sprawdza,
-czy jego poycja jest dozwolona. Jeœli nie,
-przywraca jego oryginalne po³o¿enie.
-*/
-bool brick_moveHorizontaly(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int delta){
+bool brick_moveHorizontal(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int delta){
     for (int i = 0; i < 4; i++)
         if (field[brick->poses[i].x + delta][brick->poses[i].y].taken)
             return false;
@@ -127,15 +98,6 @@ bool brick_moveHorizontaly(fieldStruct field[totalWidth][totalHeight], brickStru
     return true;
 }
 
-/*
-Funkcja sprawdzaj¹ca, czy pola podane w parametrach s¹ zajête.
-Parametry:
-    fieldStruct[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStruct
-    vec[4] - tablica dwuwymiarowych wektorów liczb ca³kowitych
-Wartoœæ zwracana:
-    true, jeœli pozycja jest dozwolona,
-false, jeœli pozycja nie jest dozwolona.
-*/
 bool brick_isPositionValid(fieldStruct field[totalWidth][totalHeight], sfVector2i vec[4]){
     for (int i = 0; i < 4; i++)
         if (field[vec[i].x][vec[i].y].taken == true)
@@ -143,18 +105,6 @@ bool brick_isPositionValid(fieldStruct field[totalWidth][totalHeight], sfVector2
     return true;
 }
 
-/*
-Funkcja przesuwaj¹ca klocek o jedno pole w dó³.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStruct
-    *brick - wskaŸnik na brickStruct
-Wartoœæ zwracana:
-    true - uda³o siê przesun¹æ klocek
-    false - nie uda³o siê przesun¹æ klocka
-
-Zmiana pozycji klocka jest sygnalizowana poprzez
-zmianê kolorów kwadratów na planszy.
-*/
 bool brick_moveDown(fieldStruct field[totalWidth][totalHeight], brickStruct *brick){
     for (int i = 0; i < 4; i++)
         if (field[brick->poses[i].x][brick->poses[i].y + 1].taken)
@@ -169,19 +119,6 @@ bool brick_moveDown(fieldStruct field[totalWidth][totalHeight], brickStruct *bri
     return true;
 }
 
-/*
-Funkcja umieszczaj¹ca aktywny klocek na planszy.
-Parametry:
-    field[totalWidht][totalHeight] - dwuwymiarowa tablica fieldStruct
-    *brick - wskaŸnik na fieldStruct
-Wartoœæ zwracana: brak.
-
-Funkcja informuje plansze o przybyciu nowego klocka
-poprzez ustawienie zajmowanych przezeñ komórek jako
-"zajêtych" i ustawienie kolorów odpowiadajacych im
-kwadratów na kolor ustawianego klocka. Po ustawieniu
-pamiêæ zajmowana przez klocek jest zwalniana.
-*/
 void brick_place(fieldStruct field[totalWidth][totalHeight], brickStruct *brick){
     for (int i = 0; i < 4; i++){
         sfRectangleShape_setFillColor(field[brick->poses[i].x][brick->poses[i].y].rect, brick->col);
@@ -190,17 +127,6 @@ void brick_place(fieldStruct field[totalWidth][totalHeight], brickStruct *brick)
     brick_destroy(brick);
 }
 
-/*
-Funkcja umo¿lwiaj¹ca rotacjê klocka w prawo.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa tablica fieldStruct
-    *brick - wskaŸnik na brickStruct
-Wartoœæ zwracana:
-    true - jeœli obrót siê powiód³,
-w przeciwnym razie false.
-
-Funkcja jest równowa¿na z wywo³aniem funkcji brick_rotate z parametrem shift = 0.
-*/
 bool brick_rotate(fieldStruct field[totalWidth][totalHeight], brickStruct *brick){
     sfVector2i possiblePos[4];
     sfVector2i pivot = brick->pivot;
@@ -227,23 +153,6 @@ bool brick_rotate(fieldStruct field[totalWidth][totalHeight], brickStruct *brick
     return true;
 }
 
-/*
-Funkcja umo¿lwiaj¹ca rotacjê klocka w prawo.
-Parametry:
-    field[totalWidth][totalHeight] - dwuwymiarowa
-tablica fieldStruct
-    *brick - wskaŸnik na brickStruct
-    shift - przesuniêcie na osi X
-Wartoœæ zwracana:
-true - jeœli obrót siê powiód³,
-w przeciwnym razie false.
-
-Funkcja przemieszcza klocek o podane przesuniêcie,
-nastêpnie sprawdza, czy jego obrót jest mo¿liwy.
-Jesli obrót powiedzie siê, funkcja koñczy siê,
-jeœli nie - przywraca klocek na jego pierwotn¹
-pozycjê i zwraca wrtoœæ false.
-*/
 bool brick_rotate2(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int shift){
     if (!brick_moveHorizontaly(field, brick, shift))
         return false;

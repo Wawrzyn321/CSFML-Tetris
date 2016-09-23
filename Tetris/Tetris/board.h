@@ -2,22 +2,22 @@
 #define BOARD_H
 #include "define.h"
 
-//wyczyszczenie wiersza
+//clearing single row
 void board_clearRow(fieldStruct field[totalWidth][totalHeight], int j);
 
-//sprawdzenie, czy wiersz jest zape³niony
+//checking if row is full
 bool board_isRowFull(fieldStruct field[totalWidth][totalHeight], int j);
 
-//inicjalizacja planszy
+//init board
 void board_init(fieldStruct field[totalWidth][totalHeight]);
 
-//aktualizacja planszy
+//updating the board (stepRate and points can be modified)
 void board_update(fieldStruct field[totalWidth][totalHeight], int *stepRate, int *points);
 
-//rysowanie planszy na ekranie
+//drawing board on screen
 void board_draw(sfRenderWindow *wind, fieldStruct field[totalWidth][totalHeight]);
 
-//dealokacja pamiêci zarezerwowanej na planszê
+//releasing memory
 void board_destroy(fieldStruct field[totalWidth][totalHeight]);
 
 #endif

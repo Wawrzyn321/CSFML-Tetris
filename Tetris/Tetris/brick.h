@@ -2,27 +2,27 @@
 #define BRICK_H
 #include "board.h"
 
-//dodanie nowego klocka
+//adding new brick
 void board_addBrick(brickStruct *brick);
 
-//zwolnienie pamiêci zajmowanej przez klocek
+//releasing memory
 void brick_destroy(brickStruct *brick);
 
-//przesuniêcie klocka na osi X
+//shift on X axis
 bool brick_moveHorizontaly(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int delta);
 
-//sprawdzenie, czy pozycja klocka jest dozwolona
+//checking brick position
 bool brick_isPositionValid(fieldStruct field[totalWidth][totalHeight], sfVector2i vec[4]);
 
-//przesuniêcie klocka o jedno pole w dó³
+//moving the brick to the bottom of board
 bool brick_moveDown(fieldStruct field[totalWidth][totalHeight], brickStruct *brick);
 
-//ustawienie klocka na planszy
+//place brick on the board
 void brick_place(fieldStruct field[totalWidth][totalHeight], brickStruct *brick);
 
-//obrót klocka
+//brick rotation
 bool brick_rotate(fieldStruct field[totalWidth][totalHeight], brickStruct *brick);
 
-//obrót klocka z przesuniêciem
+//brick rotation with shifting - used when brick touches the wall
 bool brick_rotate2(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int shift);
 #endif

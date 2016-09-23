@@ -1,14 +1,5 @@
 #include "LinkedList.h"
 
-
-/*
-Funkcja dodaj¹ca element na pocz¹tek listy.
-Parametry:
-    *l - wska¿nik na element
-    val - liczba ca³kowita (wartoœæ nowego elementu)
-Wartoœæ zwracana:
-    wskaŸnik na element
-*/
 LinkedList *LinkedList_push_front(LinkedList *l, int val) {
     size_t LinkedList_size = sizeof(LinkedList);
     if (!l) {
@@ -25,14 +16,6 @@ LinkedList *LinkedList_push_front(LinkedList *l, int val) {
     }
 }
 
-/*
-Funkcja dodaj¹ca element na koniec listy.
-Parametry:
-    *l - wska¿nik na element
-    val - liczba ca³kowita (wartoœæ nowego elementu)
-Wartoœæ zwracana:
-    wskaŸnik na element
-*/
 LinkedList *LinkedList_push_back(LinkedList *l, int val) {
     size_t LinkedList_size = sizeof(LinkedList);
     if (!l) {
@@ -52,14 +35,6 @@ LinkedList *LinkedList_push_back(LinkedList *l, int val) {
     return l;
 }
 
-/*
-Funkcja wstawiaj¹ca element do listy, zachowuj¹c kolejnoœæ rosn¹c¹.
-Parametry:
-    *l - wskaŸnik na element listy jednokierunkowej
-    val - liczba ca³kowita (wartoœæ nowego elementu)
-Wartoœæ zwracana:
-    wskaŸnik na element
-*/
 LinkedList *LinkedList_insert_in_order(LinkedList *l, int val){
     size_t LinkedList_size = sizeof(LinkedList);
     if (!l){
@@ -92,14 +67,6 @@ LinkedList *LinkedList_insert_in_order(LinkedList *l, int val){
     return l;
 }
 
-/*
-Funkcja wstawiaj¹ca element do listy, zachowuj¹c kolejnoœæ malej¹c¹.
-Parametry:
-    *l - wskaŸnik na element listy jednokierunkowej
-    val - liczba ca³kowita(wartoœæ nowego elementu)
-Wartoœæ zwracana :
-    wskaŸnik na element
-*/
 LinkedList *LinkedList_insert_in_order_reverse(LinkedList *l, int val){
     size_t LinkedList_size = sizeof(LinkedList);
     if (!l){
@@ -132,13 +99,6 @@ LinkedList *LinkedList_insert_in_order_reverse(LinkedList *l, int val){
     return l;
 }
 
-/*
-Funkcja zwracaj¹ca d³ugoœæ listy.
-Parametry:
-    *l - wskaŸnik na element listy jednokierunkowej
-Wartoœæ zwracana:
-    size - liczba ca³kowita okreœlaj¹ca d³ugoœæ listy.
-*/
 int LinkedList_getSize(LinkedList *l) {
     int size = 0;
     while (l) {
@@ -148,12 +108,6 @@ int LinkedList_getSize(LinkedList *l) {
     return size;
 }
 
-/*
-Funkcja wypisuj¹ca zawartoœæ listy na standardowe wyjœcie.
-Parametry:
-    *l - wskaŸnik na element listy jednokierunkowej
-Wartoœæ zwracana: brak.
-*/
 void LinkedList_show(LinkedList *l) {
     printf("LinkedList\n");
     printf("%d elements:\n", LinkedList_getSize(l));
@@ -164,12 +118,6 @@ void LinkedList_show(LinkedList *l) {
     printf("\n");
 }
 
-/*
-Funkcja dealokuj¹ca listê.
-Parametry:
-    **l - wskaŸnik na wskaŸnik na element listy jednokierunkowej
-Wartoœæ zwracana: brak.
-*/
 void LinkedList_destroy(LinkedList **l) {
     LinkedList* temp = *l;
     LinkedList* next;
@@ -181,17 +129,6 @@ void LinkedList_destroy(LinkedList **l) {
     *l = NULL;
 }
 
-/*
-Funkcja zwracaj¹ca z listy wartoœæ elementu o podanym indeksie.
-Parametry:
-    *l - wskaŸnik na element listy jednokierunkowej
-    index - liczba ca³kowita bêd¹ca indeksem
-Wartoœæ zwraca:
-    wartoœæ index-ego elementu
-
-Jeœli indexx wykracza poza zakres <0, d³ugoœæ listy-1>,
-funkcja zwraca wartoœæ 0.
-*/
 int LinkedList_getVal(LinkedList *l, int index) {
     if (index < 0 || index > LinkedList_getSize(l) - 1)
         return 0;
@@ -202,17 +139,6 @@ int LinkedList_getVal(LinkedList *l, int index) {
     return l->val;
 }
 
-/*
-Funkcja zwracaj¹ca z listy wskaŸnik na element o podanym indeksie
-Parametry:
-    *l - wskaŸnik na element listy jednokierunkowej
-    index - liczba ca³kowita bêd¹ca indeksem
-Wartoœæ zwracana:
-    wskaŸnik na ¿¹dany element
-
-Jeœli indexx wykracza poza zakres <0, d³ugoœæ listy - 1>,
-funkcja zwraca wartoœæ NULL.
-*/
 LinkedList *LinkedList_getElementRef(LinkedList *l, int index) {
     if (index < 0 || index > LinkedList_getSize(l) - 1)
         return NULL;

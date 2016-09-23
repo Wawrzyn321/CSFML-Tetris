@@ -3,13 +3,13 @@
 #include "define.h"
 #include "linkedList.h"
 
-//Dodanie nowego rekordu i zapis wynikow do listy
+//adding new score to list and saving it
 void IO_saveScore(int score, struct LinkedList **l);
 
-//Wczytanie wynikow do listy
+//loading scores to linked list
 bool IO_loadScores(struct LinkedList **l);
 
-//Wyzerowanie listy wynikow
+//clearing the file
 void IO_clear();
 
 #endif
