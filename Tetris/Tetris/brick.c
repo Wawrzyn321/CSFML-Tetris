@@ -154,11 +154,11 @@ bool brick_rotate(fieldStruct field[totalWidth][totalHeight], brickStruct *brick
 }
 
 bool brick_rotate2(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int shift){
-    if (!brick_moveHorizontaly(field, brick, shift))
+    if (!brick_moveHorizontal(field, brick, shift))
         return false;
     if (brick_rotate(field, brick))
         return true;
     else
-        brick_moveHorizontaly(field, brick, -shift);
+        brick_moveHorizontal(field, brick, -shift);
     return false;
 }

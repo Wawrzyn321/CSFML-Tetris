@@ -119,6 +119,7 @@ void GUI_fillHS(sfText *GUI_HS_Texts[6], LinkedList *l, int pos){
     int LLSize = LinkedList_getSize(l);
     if (LLSize > 5)
         LLSize = 5;
+
     for (int i = 0; i < pos; i++)
         l = l->pNext;
     for (int i = 1; i <= LLSize; i++){

@@ -27,6 +27,9 @@ void hideConsole(){
 
 
 int main(){
+
+    printf("Loading...");
+
     //load the font
     sfFont *GUIFont;
     GUIFont = sfFont_createFromFile(fontName);
@@ -63,6 +66,7 @@ int main(){
     //game window
     sfRenderWindow *window = sfRenderWindow_create((sfVideoMode){ windowWidth, windowHeight, 32 }, "Tetris (H - show highscores, P- pause, R - reset)", sfClose, NULL);
 
+    //flags
     bool playin = true;
     bool pause = false;
     bool showingHighscores = false;
@@ -264,14 +268,14 @@ int main(){
 
             //moving brick on X axis
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyRight && playin && !pause){
-                brick_moveHorizontaly(field, currentBrick, 1);
+                brick_moveHorizontal(field, currentBrick, 1);
                 rightKeyReleased = false;
             }
             if (event.type == sfEvtKeyReleased && event.key.code == sfKeyRight && rightKeyReleased)
                 rightKeyReleased = true;
 
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyLeft && playin && !pause){
-                brick_moveHorizontaly(field, currentBrick, -1);
+                brick_moveHorizontal(field, currentBrick, -1);
                 leftKeyReleased = false;
             }
             if (event.type == sfEvtKeyReleased && event.key.code == sfKeyLeft && leftKeyReleased)

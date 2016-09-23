@@ -1,27 +1,5 @@
 #include "board.h"
 
-void board_clearRow(fieldStruct field[totalWidth][totalHeight], int j){
-#if DEBUG
-    if (j<1 || j>totalHeight - 1)
-        printf("wrong in clearRow: %d", j);
-#endif
-    for (int i = 1; i < totalWidth - 1; i++){
-        sfRectangleShape_setFillColor(field[i][j].rect, sfTransparent);
-        field[i][j].taken = false;
-    }
-}
-
-bool board_isRowFull(fieldStruct field[totalWidth][totalHeight], int j){
-#if DEBUG
-    if (j<1 || j>totalHeight - 1)
-        printf("wrong in isRowFull: %d", j);
-#endif
-    for (int i = 1; i < totalWidth - 1; i++)
-        if (!field[i][j].taken)
-            return false;
-    return true;
-}
-
 
 void board_init(fieldStruct field[totalWidth][totalHeight]){
     for (int i = 0; i < totalWidth; i++)
@@ -50,6 +28,29 @@ void board_init(fieldStruct field[totalWidth][totalHeight]){
         field[totalWidth - 1][j].taken = true;
     }
 }
+
+void board_clearRow(fieldStruct field[totalWidth][totalHeight], int j) {
+#if DEBUG
+    if (j<1 || j>totalHeight - 1)
+        printf("wrong in clearRow: %d", j);
+#endif
+    for (int i = 1; i < totalWidth - 1; i++) {
+        sfRectangleShape_setFillColor(field[i][j].rect, sfTransparent);
+        field[i][j].taken = false;
+    }
+}
+
+bool board_isRowFull(fieldStruct field[totalWidth][totalHeight], int j) {
+#if DEBUG
+    if (j<1 || j>totalHeight - 1)
+        printf("wrong in isRowFull: %d", j);
+#endif
+    for (int i = 1; i < totalWidth - 1; i++)
+        if (!field[i][j].taken)
+            return false;
+    return true;
+}
+
 
 void board_update(fieldStruct field[totalWidth][totalHeight], int *stepRate, int *points){
     for (int j = 1; j < totalHeight - 1; j++)

@@ -9,7 +9,7 @@ void board_addBrick(brickStruct *brick);
 void brick_destroy(brickStruct *brick);
 
 //shift on X axis
-bool brick_moveHorizontaly(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int delta);
+bool brick_moveHorizontal(fieldStruct field[totalWidth][totalHeight], brickStruct *brick, int delta);
 
 //checking brick position
 bool brick_isPositionValid(fieldStruct field[totalWidth][totalHeight], sfVector2i vec[4]);
